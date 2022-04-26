@@ -1,0 +1,33 @@
+version: '3.4'
+
+volumes:
+  mongo_vol:
+
+networks:
+  produto-net:
+    driver: bridge
+
+services:
+  api:
+    depends_on: 
+     - mongodb
+    image: gweisheimer/api-produto:0.2
+    build:
+      dockerfile: ../Dockerfile
+      context: ./src
+    ports: 
+     - 8080:8080
+    networks:
+     - produto-net
+    environment:
+      MONGODB_URI: mongodb://mongouser:mongopwd@mongodb:27017/admin
+
+  mongodb:
+    image: mongo:4.4.3
+    networks:
+     - produto-net
+    volumes:
+     - mongo_vol:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
